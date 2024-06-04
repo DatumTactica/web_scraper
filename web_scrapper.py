@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import json
 
 def scrapInitConfig(url):
     pageToScrap = requests.get(url)
@@ -67,4 +68,20 @@ def F1TeamsPositions(url):
         values.append(data)
     return dict(zip(keys, values))
 
+def F1Results(url):
+    soup = scrapInitConfig(url)
+    table = soup.findAll('table', attrs={'class': 'resultsarchive-table'})
+    res = pd.read_html(str(table))[0]
+    del res[res.columns[0]]
+    del res[res.columns[-1]]
+    return res.to_dict('records')
 
+def createJSON(path,dict):
+    with open(path+'.json', 'w', encoding='latin-1') as f:
+        json.dump(dict, f, indent=4, ensure_ascii=False)
+
+def F1MinMaxYears(url):
+    soup = scrapInitConfig(url)
+    table = soup.find('div', class_='resultsarchive-filter-container').find('div').findAll('a')
+    print(table)
+    # for i in table[0].contents[0].contents[0]:
