@@ -19,7 +19,6 @@ print("Created drivers positions File")
 data = {}
 for i in drivers_positions:
     data[i] = F1Details(drivers_positions[i]['driver_link'],drivers_positions[i]['name'])
-print(type(data))
 # print(pd.DataFrame.from_dict(data,orient='index'))
 pd.DataFrame.from_dict(data,orient='index').to_parquet(os.getenv("DESTINTATION_PATH") + data_folder + '/drivers_'+date)
 print("Created drivers File")

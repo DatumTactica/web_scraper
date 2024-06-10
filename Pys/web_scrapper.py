@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 import json
 import os
-import pathlib
+import io
 from dotenv import load_dotenv, dotenv_values 
 load_dotenv() 
 
@@ -72,13 +72,36 @@ def F1TeamsPositions(url):
         values.append(data)
     return dict(zip(keys, values))
 
-def F1Results(url):
+def F1Results(url,column_link=None):
     soup = scrapInitConfig(url)
-    table = soup.findAll('table', attrs={'class': 'resultsarchive-table'})
-    res = pd.read_html(str(table))[0]
-    del res[res.columns[0]]
-    del res[res.columns[-1]]
+    table = soup.find('table', attrs={'class': 'resultsarchive-table'})
+    res = pd.read_html(io.StringIO(str(table)))[0]
+    res = res.iloc[:, 1:-1]
+    # If link_column_name is provided, extract links from the specified column
+    if column_link is not None:
+        links = []
+        link_column_index = res.columns.get_loc(column_link)+1
+        for row in table.find_all('tr')[1:]:
+            link = row.find_all('td')[link_column_index].find('a')
+            if link:
+                links.append(link['href'])
+            else:
+                links.append(None)        
+        # Add links as a new column to the DataFrame
+        res[column_link + '_link'] = links
     return res.to_dict('records')
+
+def F1RaceResultsLinks(url):
+    soup = scrapInitConfig(url)
+    li_tags = soup.find_all("li", class_="side-nav-item")
+    links_dict = {}
+    for li in li_tags:
+        a_tags = li.find_all("a")
+        for a_tag in a_tags:
+            link = a_tag.get("href") 
+            text = a_tag.get_text()  
+            links_dict[text] = link  
+    return links_dict
 
 def createDir(path):
     if not path.endswith('/'):

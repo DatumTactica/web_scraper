@@ -1,3 +1,4 @@
 data/
 dev
 .env
+aux.py

@@ -2,6 +2,7 @@ beautifulsoup4==4.12.3
 bs4==0.0.2
 certifi==2024.6.2
 charset-normalizer==3.3.2
+html5lib==1.1
 idna==3.7
 lxml==5.2.2
 numpy==1.26.4
@@ -15,4 +16,5 @@ six==1.16.0
 soupsieve==2.5
 tzdata==2024.1
 urllib3==2.2.1
+webencodings==0.5.1
 wsl==0.12
