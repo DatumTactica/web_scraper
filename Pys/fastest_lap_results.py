@@ -7,6 +7,10 @@ pp = pprint.PrettyPrinter(indent=4)
 import numpy as np
 from dotenv import load_dotenv 
 load_dotenv() 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Get current year
 year = datetime.today().strftime('%Y')
@@ -48,9 +52,9 @@ for i in to_process:
         j['year'] = i
         # j['Pos'] = str(j['Pos'])
     fastest_lap_results.extend(current_results)
-    print(f"Gathered fastest lap results from {str(i)}")
+    logger.info(f"Gathered fastest lap results from {str(i)}")
 
 # Save as data frame
 # print(pd.DataFrame(fastest_lap_results)['Pos'])
 pd.DataFrame(fastest_lap_results).to_parquet(os.getenv("DESTINTATION_PATH") + data_folder + '/fastest_lap_results',partition_cols=['year','Driver'])
-print('Created files with fastest lap resulsts')
+logger.info('Created files with fastest lap resulsts')
