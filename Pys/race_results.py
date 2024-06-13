@@ -2,11 +2,13 @@ from web_scrapper import F1Results,createDir,createDir,F1RaceResultsLinks
 import pandas as pd
 from datetime import datetime
 import os
-import pprint 
-pp = pprint.PrettyPrinter(indent=4)
 import numpy as np
 from dotenv import load_dotenv 
 load_dotenv() 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Get current year
 year = datetime.today().strftime('%Y')
@@ -43,7 +45,7 @@ for i in to_process:
     # Append the year results to the results array
     current_results = F1Results(race_results_url,'Grand Prix')
     race_results.extend(current_results)
-    print(f"Gathered race results from {str(i)}")
+    logger.info(f"Gathered race results from {str(i)}")
     gp_race_results = []
     for j in current_results:
         gp_url = f"https://www.formula1.com/{j['Grand Prix_link']}"
@@ -75,9 +77,9 @@ for i in to_process:
             dir = os.getenv("DESTINTATION_PATH") + data_folder + '/gp_' + link.replace(' ','_').lower() + '_results/'
             createDir(dir)
             pd.DataFrame(gp_race_results).to_parquet(dir + j['Grand Prix'].replace(' ','').lower() + j['Date'].replace(' ','').lower() + '.parquet')
-            print(f"Created {link} file for {j['Grand Prix']} on {j['Date']}")
+            logger.info(f"Created {link} file for {j['Grand Prix']} on {j['Date']}")
 
 # Save as data frame
 pd.DataFrame(race_results).to_parquet(os.getenv("DESTINTATION_PATH") + data_folder + '/race_results',partition_cols=['Winner','Grand Prix'])
-print('Created file with race resulsts')
+logger.info('Created file with race resulsts')
 
