@@ -17,7 +17,7 @@ def main():
     year = datetime.today().strftime('%Y')
 
     # Set parent folder 
-    data_folder = 'results_drivers'
+    data_folder = 'results_races'
     
     full_path = STORAGE_ROOT + data_folder
 
@@ -37,21 +37,25 @@ def main():
         to_process = np.setdiff1d(years, processed)
 
     # Get race results
-    results_driver = []
+    results_races = []
     for i in to_process:
 
-        results_driver_url = START_URL + '/en/results.html/'+str(i)+'/drivers.html'
+        results_races_url = START_URL + '/en/results.html/'+str(i)+'/races.html'
         # Append the year results to the results array
-        current_results = F1Results(results_driver_url)
+        current_results = F1Results(results_races_url,'Grand Prix')
         for j in current_results:
             j['year'] = i
-        results_driver.extend(current_results)
+        results_races.extend(current_results)
+        # print(results_races)
         logger.info(f"Gathered driver results from {str(i)}")
 
+
+
     save_parquet(
-        data = results_driver,
+        data = results_races,
         relative_path=data_folder,
-        partitions=['year','Driver']
+        # filename='results_races_test'
+        partitions=['year','Grand Prix']
     )
     
 if __name__ == "__main__":

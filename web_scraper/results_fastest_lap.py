@@ -6,6 +6,10 @@ from datetime import datetime
 import numpy as np
 import os
 import pandas as pd
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -33,19 +37,19 @@ def main():
         to_process = np.setdiff1d(years, processed)
 
     # Get race results
-    driver_results = []
+    fastest_lap_results = []
     for i in to_process:
 
-        driver_results_url = START_URL + '/en/results.html/'+str(i)+'/drivers.html'
+        fastest_lap_results_url = START_URL + '/en/results.html/'+str(i)+'/drivers.html'
         # Append the year results to the results array
-        current_results = F1Results(driver_results_url)
+        current_results = F1Results(fastest_lap_results_url)
         for j in current_results:
             j['year'] = i
-        driver_results.extend(current_results)
-        print(f"Gathered driver results from {str(i)}")
+        fastest_lap_results.extend(current_results)
+        logger.info(f"Gathered driver results from {str(i)}")
 
     save_parquet(
-        data = driver_results,
+        data = fastest_lap_results,
         relative_path=data_folder,
         partitions=['year','Driver']
     )

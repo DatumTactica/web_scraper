@@ -1,9 +1,13 @@
 import pandas as pd
 import os
 from web_scraper.config import STORAGE_ROOT
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def save_parquet(data,relative_path,filename = None,partitions = None):
-    
+
     dir = full_path = STORAGE_ROOT + relative_path
     if not filename:
         full_path = STORAGE_ROOT + relative_path
@@ -22,7 +26,7 @@ def save_parquet(data,relative_path,filename = None,partitions = None):
             full_path,
             partition_cols=partitions
         )
-    print(f'Parquet created at {relative_path}')
+    logger.info(f'Parquet created at {full_path}')
 
 def createDir(path):
     if not path.endswith('/'):
@@ -30,4 +34,4 @@ def createDir(path):
         # print (path)
     if not os.path.exists(path):
         os.makedirs(path)
-        print(f'Dir created: {path}')
+        logger.info(f'Dir created: {path}')

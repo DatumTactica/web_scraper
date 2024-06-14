@@ -3,9 +3,6 @@ from web_scraper.config import START_URL
 from web_scraper.scraper import F1DriversPositions,F1Details
 from web_scraper.storage import save_parquet
 from datetime import datetime
-import numpy as np
-import os
-import pandas as pd
 
 def main():
     # Get current date
@@ -13,8 +10,6 @@ def main():
 
     # Set parent folder 
     data_folder = 'drivers_positions'
-    
-    full_path = STORAGE_ROOT + data_folder
 
     drivers_positions_url = START_URL + '/en/drivers'
     # Get race results
