@@ -7,6 +7,10 @@ pp = pprint.PrettyPrinter(indent=4)
 import numpy as np
 from dotenv import load_dotenv 
 load_dotenv() 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Get current year
 year = datetime.today().strftime('%Y')
@@ -47,8 +51,8 @@ for i in to_process:
     for j in current_results:
         j['year'] = i
     driver_results.extend(current_results)
-    print(f"Gathered driver results from {str(i)}")
+    logger.info(f"Gathered driver results from {str(i)}")
 
 # Save as data frame
 pd.DataFrame(driver_results).to_parquet(os.getenv("DESTINTATION_PATH") + data_folder + '/driver_results',partition_cols=['year','Driver'])
-print('Created file with driver resulsts')
+logger.info('Created file with driver resulsts')
