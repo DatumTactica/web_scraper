@@ -3,3 +3,4 @@ venv
 .env
 aux.py
 */__pycache__
+/__pycache__

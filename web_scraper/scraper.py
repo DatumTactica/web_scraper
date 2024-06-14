@@ -63,3 +63,15 @@ def F1Details(url,driver):
         keys.append(header.text)
         values.append(text.text)
     return dict(zip(keys, values))
+
+def F1RaceResultsLinks(url):
+    soup = fetch_page(url)
+    li_tags = soup.find_all("li", class_="side-nav-item")
+    links_dict = {}
+    for li in li_tags:
+        a_tags = li.find_all("a")
+        for a_tag in a_tags:
+            link = a_tag.get("href") 
+            text = a_tag.get_text()  
+            links_dict[text] = link  
+    return links_dict
