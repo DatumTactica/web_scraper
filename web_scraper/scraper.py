@@ -75,3 +75,29 @@ def F1RaceResultsLinks(url):
             text = a_tag.get_text()  
             links_dict[text] = link  
     return links_dict
+
+def F1TeamsPositions(url):
+    soup = fetch_page(url)
+    cards = soup.findAll('a', attrs={'class': 'outline outline-offset-4 outline-brand-black group outline-0 focus-visible:outline-2'})
+    res = []
+    keys, values = [], []
+    for card in cards:
+        card_details = card.contents[0].contents[0]
+        # print(card.contents[0])
+        position = card_details.contents[0].contents[0].text
+        points = card_details.contents[0].contents[1].contents[0].text
+        name = card_details.contents[2].contents[0].contents[0].contents[0].text
+        drivers = {
+            'driver1': card_details.contents[4].contents[0].contents[0].contents[0].contents[0].text + ' ' + card_details.contents[4].contents[0].contents[0].contents[0].contents[1].text,
+            'driver2': card_details.contents[4].contents[1].contents[0].contents[0].contents[0].text + ' ' + card_details.contents[4].contents[1].contents[0].contents[0].contents[1].text
+        }
+        team_link = START_URL + card['href']
+        data = {
+            'name': name,
+            'drivers': drivers,
+            'points': points,
+            'team_link':team_link
+            }
+        keys.append(position)
+        values.append(data)
+    return dict(zip(keys, values))
