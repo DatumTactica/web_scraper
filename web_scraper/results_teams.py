@@ -45,6 +45,8 @@ def main():
         current_results = F1Results(results_teams_url)
         for j in current_results:
             j['year'] = i
+            if 'Pos' in j:
+                j['Pos']=str(j['Pos'])
         results_teams.extend(current_results)
         logger.info(f"Gathered driver results from {str(i)}")
 
