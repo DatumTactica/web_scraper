@@ -1,5 +1,6 @@
 from web_scraper.config import STORAGE_ROOT
 from web_scraper.config import START_URL
+from web_scraper.config import MIN_YEAR
 from web_scraper.scraper import F1Results,F1RaceResultsLinks
 from web_scraper.storage import save_parquet
 from datetime import datetime
@@ -23,7 +24,7 @@ def main():
     full_path = STORAGE_ROOT + data_folder
 
     # Set range of years to process
-    years = np.arange(2022,int(year)+1,1)
+    years = np.arange(MIN_YEAR,int(year)+1,1)
 
     # Check if there are any processed results
     if not os.path.exists(full_path) or not os.listdir(full_path):
