@@ -42,14 +42,20 @@ def main():
     for i in to_process:
 
         results_teams_url = START_URL + '/en/results.html/'+str(i)+'/team.html'
+        print(results_teams_url)
         # Append the year results to the results array
-        current_results = F1Results(results_teams_url)
+        try:
+            current_results = F1Results(results_teams_url)
+        except: 
+            logger.warning(f"There are no results for teams for the year {str(i)}")
+            continue
+            
         for j in current_results:
             j['year'] = i
             if 'Pos' in j:
                 j['Pos']=str(j['Pos'])
         results_teams.extend(current_results)
-        logger.info(f"Gathered driver results from {str(i)}")
+        logger.info(f"Gathered team results from {str(i)}")
 
     save_parquet(
         data = results_teams,

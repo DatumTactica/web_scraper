@@ -18,7 +18,7 @@ def main():
     year = datetime.today().strftime('%Y')
 
     # Set parent folder 
-    data_folder = 'results_drivers'
+    data_folder = 'results_fastests_lap'
     
     full_path = STORAGE_ROOT + data_folder
 
@@ -41,7 +41,7 @@ def main():
     fastest_lap_results = []
     for i in to_process:
 
-        fastest_lap_results_url = START_URL + '/en/results.html/'+str(i)+'/drivers.html'
+        fastest_lap_results_url = START_URL + '/en/results.html/'+str(i)+'/fastest-laps.html'
         # Append the year results to the results array
         current_results = F1Results(fastest_lap_results_url)
         for j in current_results:
@@ -49,12 +49,12 @@ def main():
             if 'Pos' in j:
                 j['Pos']=str(j['Pos'])
         fastest_lap_results.extend(current_results)
-        logger.info(f"Gathered driver results from {str(i)}")
+        logger.info(f"Gathered fastest-laps results from {str(i)}")
 
     save_parquet(
         data = fastest_lap_results,
         relative_path=data_folder,
-        partitions=['year','Driver']
+        partitions=['year']
     )
     
 if __name__ == "__main__":

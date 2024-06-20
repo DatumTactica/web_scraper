@@ -93,13 +93,13 @@ def main():
             data = results_races_gp,
             relative_path=gp_data_folder,
             # filename='test'
-            partitions=['date','gp']
+            partitions=['year']
         )
 
     save_parquet(
         data = results_races,
         relative_path=data_folder,
-        partitions=['year','Grand Prix']
+        partitions=['year']
     )
     
 if __name__ == "__main__":
