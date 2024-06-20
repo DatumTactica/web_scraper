@@ -54,7 +54,7 @@ def main():
     save_parquet(
         data = results_driver,
         relative_path=data_folder,
-        partitions=['year','Driver']
+        partitions=['year']
     )
     
 if __name__ == "__main__":
