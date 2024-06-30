@@ -1,48 +1,36 @@
-from web_scraper.config import STORAGE_ROOT
-from web_scraper.config import START_URL
-from web_scraper.config import MIN_YEAR
+from web_scraper.config import STORAGE_ROOT,START_URL,MIN_YEAR
+from web_scraper.functions import years_to_process
 from web_scraper.scraper import F1Results
 from web_scraper.storage import save_parquet
 from datetime import datetime
 import numpy as np
-import os
-import pandas as pd
 import logging
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Set parent folder 
+table_name = 'results_teams'
 
 def main():
     # Get current year
     year = datetime.today().strftime('%Y')
 
-    # Set parent folder 
-    data_folder = 'results_teams'
-    
-    full_path = STORAGE_ROOT + data_folder
-
     # Set range of years to process
     years = np.arange(MIN_YEAR,int(year)+1,1)
-
-    # Check if there are any processed results
-    if not os.path.exists(full_path) or not os.listdir(full_path):
-        # When there are not processed results, process all years
-        to_process = years
-    else:
-        # When there's processed results, get the distinct years that have been processed
-        processed = pd.read_parquet(full_path, columns=['year'])['year'].unique()
-        # Ensure to reprocess current year
-        processed = processed[processed != int(year)]
-        # Set the years to process as the difference between what has been pocessed and the expectation
-        to_process = np.setdiff1d(years, processed)
+    
+    # Set the full path to store or retrieve the data
+    full_path = STORAGE_ROOT + table_name
+    
+    # When there's processed results, get the distinct years that have been processed
+    to_process = years_to_process(full_path,years,year)
 
     # Get race results
     results_teams = []
     for i in to_process:
 
         results_teams_url = START_URL + '/en/results.html/'+str(i)+'/team.html'
-        print(results_teams_url)
         # Append the year results to the results array
         try:
             current_results = F1Results(results_teams_url)
@@ -59,7 +47,7 @@ def main():
 
     save_parquet(
         data = results_teams,
-        relative_path=data_folder,
+        table_name=table_name,
         partitions=['year']
     )
     
