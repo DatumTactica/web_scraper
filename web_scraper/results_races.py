@@ -1,42 +1,30 @@
-from web_scraper.config import STORAGE_ROOT
-from web_scraper.config import START_URL
-from web_scraper.config import MIN_YEAR
+from web_scraper.config import STORAGE_ROOT,START_URL,MIN_YEAR
+from web_scraper.functions import years_to_process
 from web_scraper.scraper import F1Results,F1RaceResultsLinks
 from web_scraper.storage import save_parquet
 from datetime import datetime
 import numpy as np
-import os
-import pandas as pd
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Set parent folder 
+table_name = 'results_races'
+gp_table_name = 'gp_results_races'
 
 def main():
     # Get current year
     year = datetime.today().strftime('%Y')
 
-    # Set parent folder 
-    data_folder = 'results_races'
-    gp_data_folder = 'gp_results_races'
-    
-    full_path = STORAGE_ROOT + data_folder
-
     # Set range of years to process
     years = np.arange(MIN_YEAR,int(year)+1,1)
-
-    # Check if there are any processed results
-    if not os.path.exists(full_path) or not os.listdir(full_path):
-        # When there are not processed results, process all years
-        to_process = years
-    else:
-        # When there's processed results, get the distinct years that have been processed
-        processed = pd.read_parquet(full_path, columns=['year'])['year'].unique()
-        # Ensure to reprocess current year
-        processed = processed[processed != int(year)]
-        # Set the years to process as the difference between what has been pocessed and the expectation
-        to_process = np.setdiff1d(years, processed)
+    
+    # Set the full path to store or retrieve the data
+    full_path = STORAGE_ROOT + table_name
+    
+    # When there's processed results, get the distinct years that have been processed
+    to_process = years_to_process(full_path,years,year)
 
     # Get race results
     results_races = []
@@ -45,10 +33,12 @@ def main():
         results_races_url = START_URL + '/en/results.html/'+str(i)+'/races.html'
         # Append the year results to the results array
         current_results = F1Results(results_races_url,'Grand Prix')
+        for j in current_results:
+            j['year'] = i
         
         results_races.extend(current_results)
         
-        logger.info(f"Gathered driver results from {str(i)}")
+        logger.info(f"Gathered race results from {str(i)}")
 
         # Define link for each GP results 
         results_races_gp = []
@@ -69,7 +59,8 @@ def main():
             # Get available links
             aval_links = F1RaceResultsLinks(gp_url)
             aval_links.pop('Race result', None)
-            
+            # print(aval_links)
+            logger.info(f"Gathering results from {result['Grand Prix']} - {i}")
             for link in aval_links:
                 gp_url = f"{START_URL}/{aval_links[link]}"
                 sub_results_races_gp = F1Results(gp_url)
@@ -80,25 +71,22 @@ def main():
                     if 'Pos' in sub_result:
                         sub_result['Pos'] = str(sub_result['Pos'])
                 filename = f"{result['Grand Prix'].replace(' ','').lower()}{i}"
-                gp_sub_data_folder = f"gp_{link.replace(' ','_').lower()}"
+                gp_sub_table_name = f"gp_{link.replace(' ','_').lower()}"
+                # print(sub_results_races_gp)
                 save_parquet(
                     data = sub_results_races_gp,
-                    relative_path=gp_sub_data_folder,
+                    table_name=gp_sub_table_name,
+                    # partitions=['year']
                     filename=filename
                 )
-
-
-            # break
         save_parquet(
             data = results_races_gp,
-            relative_path=gp_data_folder,
-            # filename='test'
+            table_name=gp_table_name,
             partitions=['year']
         )
-
     save_parquet(
         data = results_races,
-        relative_path=data_folder,
+        table_name=table_name,
         partitions=['year']
     )
     
