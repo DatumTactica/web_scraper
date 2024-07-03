@@ -17,7 +17,7 @@ def save_local(duckdb_con, table_name, path, partition=None, filename=None):
         filename = ''
     else:
         partitions = ''
-        filename = f'/{filename}'
+        # filename = f'/{filename}'
     query = f"""
         COPY (
             SELECT * 
@@ -26,6 +26,7 @@ def save_local(duckdb_con, table_name, path, partition=None, filename=None):
         TO '{path}{table_name}/{filename}' 
         (FORMAT PARQUET{partitions});
     """
+    print(query)
     duckdb_con.sql(query)
     logger.info(f"Parquets created at: {path}{table_name}")
 
@@ -50,6 +51,7 @@ def save_parquet(data,table_name,filename = None,partitions = None):
     create_table_from_dataframe(duckdb_con,table_name)
 
     if filename:
+        filename=filename.replace("'","")
         if not filename.endswith('.parquet'):
             filename = filename + '.parquet'
 
