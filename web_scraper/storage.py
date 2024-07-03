@@ -26,7 +26,6 @@ def save_local(duckdb_con, table_name, path, partition=None, filename=None):
         TO '{path}{table_name}/{filename}' 
         (FORMAT PARQUET{partitions});
     """
-    print(query)
     duckdb_con.sql(query)
     logger.info(f"Parquets created at: {path}{table_name}")
 
