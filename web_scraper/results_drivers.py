@@ -1,4 +1,4 @@
-from web_scraper.config import STORAGE_ROOT,START_URL,MIN_YEAR
+from web_scraper.config import START_URL,MIN_YEAR
 from web_scraper.functions import years_to_process
 from web_scraper.scraper import F1Results
 from web_scraper.storage import save_parquet
@@ -19,11 +19,8 @@ def main():
     # Set range of years to process
     years = np.arange(MIN_YEAR,int(year)+1,1)
     
-    # Set the full path to store or retrieve the data
-    full_path = STORAGE_ROOT + table_name
-    
     # When there's processed results, get the distinct years that have been processed
-    to_process = years_to_process(full_path,years,year)
+    to_process = years_to_process(table_name,years,year)
 
     # Get race results
     results_driver = []
