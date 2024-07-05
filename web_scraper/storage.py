@@ -22,7 +22,7 @@ def save(duckdb_con, table_name, path, partition=None, filename=None):
             SELECT * 
             FROM {table_name}
         ) 
-        TO '{path}{table_name}{filename}' 
+        TO '{path}{table_name}/{filename}' 
         (FORMAT PARQUET{partitions});
     """
     # print('test')
