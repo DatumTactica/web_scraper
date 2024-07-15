@@ -50,6 +50,8 @@ def main():
                 result_gp['year'] = i
                 if 'Pos' in result_gp:
                     result_gp['Pos']=str(result_gp['Pos'])
+                if 'PTS' in result_gp:
+                    result_gp['PTS']=float(result_gp['PTS'])
                 # print(result_gp['Pos'] )
             results_races_gp.extend(current_results_gp)
             
@@ -67,9 +69,11 @@ def main():
                     sub_result['year'] = i
                     if 'Pos' in sub_result:
                         sub_result['Pos'] = str(sub_result['Pos'])
+                    if 'Time' in sub_result:
+                        sub_result['Time'] = str(sub_result['Time'])
                 filename = f"{result['Grand Prix'].replace(' ','').lower()}{i}"
                 gp_sub_table_name = f"gp_{link.replace(' ','_').lower()}"
-                # print(sub_results_races_gp)
+                # print(gp_url)
                 save_parquet(
                     data = sub_results_races_gp,
                     table_name=gp_sub_table_name,
