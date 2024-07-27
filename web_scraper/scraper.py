@@ -16,7 +16,8 @@ def F1Results(url,column_link=None):
     # Seems like the webpage changed the class of the table. 04-27-2024
     table = soup.find('table', attrs={'class': 'f1-table'})
     res = pd.read_html(io.StringIO(str(table)))[0]
-    res = res.iloc[:, 1:-1]
+    # The webpage removed the extra columns at the beging and end
+    # res = res.iloc[:, 1:-1]
     # If link_column_name is provided, extract links from the specified column
     if column_link is not None:
         links = []
