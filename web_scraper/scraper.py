@@ -12,7 +12,9 @@ def fetch_page(url):
 
 def F1Results(url,column_link=None):
     soup = fetch_page(url)
-    table = soup.find('table', attrs={'class': 'resultsarchive-table'})
+    # table = soup.find('table', attrs={'class': 'resultsarchive-table'})
+    # Seems like the webpage changed the class of the table. 04-27-2024
+    table = soup.find('table', attrs={'class': 'f1-table'})
     res = pd.read_html(io.StringIO(str(table)))[0]
     res = res.iloc[:, 1:-1]
     # If link_column_name is provided, extract links from the specified column
