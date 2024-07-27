@@ -22,7 +22,8 @@ def check_files(duck_con,full_path):
         processed_df = duck_con.execute("select distinct year from df").fetchdf()
         processed = processed_df['year'].to_list()
         return processed
-    except:
+    except Exception as e:
+        logger.warning(f'There was an error reading the S3 folder\nError: {full_path}\nAll years will be processed')
         return []
 
 
