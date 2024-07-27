@@ -21,7 +21,9 @@ def F1Results(url,column_link=None):
     # If link_column_name is provided, extract links from the specified column
     if column_link is not None:
         links = []
-        link_column_index = res.columns.get_loc(column_link)+1
+        # The changes in the webpage made that the "+1" were not necessary anymore. FOR-8 
+        # link_column_index = res.columns.get_loc(column_link)+1
+        link_column_index = res.columns.get_loc(column_link)
         for row in table.find_all('tr')[1:]:
             link = row.find_all('td')[link_column_index].find('a')
             if link:
